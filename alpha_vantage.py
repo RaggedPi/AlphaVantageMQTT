@@ -66,8 +66,6 @@ def publish(symbol, price):
       allow_nan=True,
       separators=(',', ':'))
 
-    # Publish
-    client.publish(topic, payload=payload)
     # Publish To Broker
     try:
         client.publish(topic, payload=payload)
@@ -111,7 +109,7 @@ def on_disconnect(client, userdata, rc):
 
 # OnPublish
 def on_publish(client, obj, mid):
-    log.info("Mid: {}".format(str(mid)))
+    log.debug("Mid: {}".format(str(mid)))
 
 
 ################################################################
