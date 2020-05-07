@@ -4,7 +4,6 @@
 # Imports                                                      #
 ################################################################
 # Globals
-import argparse
 import json
 import time
 import uuid
@@ -22,11 +21,8 @@ import configparser
 ################################################################
 # UUID
 uuidstr = str(uuid.uuid1())
-# Parsers
-parser = argparse.ArgumentParser(description="AlphaVantage MQTT Publisher")
+# ConfigParser
 config = configparser.ConfigParser()
-# Parser Groups
-logger = parser.add_argument_group("MQTT publish")
 # Logging
 log = logging.getLogger(__name__)
 file_hander = logging.FileHandler('alpha_vantage.log')
