@@ -36,6 +36,7 @@ log.addHandler(file_hander)
 ################################################################
 # Get Current Stock Prices
 def publish(symbol, price):
+    """Publishes stock ticker data to mqtt broker."""
     # Connect
     try:
         client.connect(
@@ -45,7 +46,7 @@ def publish(symbol, price):
         log.error("Failed to connect to broker. {}".format(e))
 
     # Build Topic
-    topic = "{}{}".format(config.get("MQTT", "root_topic"), symbol)
+    topic = "{}{}".format(config.get("MQTT", "root_topic"), symbol.lower())
 
     # Build Payload
     data = OrderedDict()
@@ -85,6 +86,7 @@ def getConfigList(option, sep=',', chars=None):
 ################################################################
 # OnConnect
 def on_connect(client, userdata, flags, rc):
+    """OnConnect callback."""
     if rc == 0:
         client.connected_flag = True
         log.debug("Connected. [RC: {}]".format(rc))
@@ -95,16 +97,19 @@ def on_connect(client, userdata, flags, rc):
 
 # OnLog
 def on_log(client, obj, mid):
+    """OnLog callback."""
     log.debug("Mid: {}".format(str(mid)))
 
 
 # OnDisconnect
 def on_disconnect(client, userdata, rc):
+    """OnDisconnect callback."""
     log.debug("Disconnected. ReasonCode={}".format(rc))
 
 
 # OnPublish
 def on_publish(client, obj, mid):
+    """OnPublish callback."""
     log.debug("Mid: {}".format(str(mid)))
 
 
@@ -139,13 +144,16 @@ log.info("Publishing to broker:{} Every:{} seconds".format(
 mqtt.Client.connected_flag = False
 mqtt.Client.bad_connection_flag = False
 # MQTT Client
-client = mqtt.Client(
-    client_id=uuidstr,
-    clean_session=False)
-client.username_pw_set(
-    username=config.get("MQTT", "username"),
-    password=config.get("MQTT", "password"))
-
+try:
+    client = mqtt.Client(
+        client_id=uuidstr,
+        clean_session=False)
+    client.username_pw_set(
+        username=config.get("MQTT", "username"),
+        password=config.get("MQTT", "password"))
+except Exception as e:
+    log.error("Failed to create MQTT client. {}".format (e))
+    
 ################################################################
 # Set Callbacks                                                #
 ################################################################
